@@ -88,12 +88,3 @@ class WebSocketMaster extends Actor {
   }
 }
 
-class TronGame extends WebSocketMaster {
-  /* handle a javascript message from the websocket */
-  override def handleJsMessage(msg: JsValue) = {
-	  Logger("TronGame").info("Got a tron game message, hooboy")
-	  children.foreach { child =>
-		child ! msg
-	  }
-  }
-}

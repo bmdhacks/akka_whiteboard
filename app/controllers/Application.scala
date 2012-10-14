@@ -18,11 +18,11 @@ import akka.util.duration._
 
 object Application extends Controller {
   
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def index = Action { implicit request =>
+    Ok(views.html.index("Whiteboard"))
   }
 
-  val wsMaster = Akka.system.actorOf(Props[TronGame])
+  val wsMaster = Akka.system.actorOf(Props[WebSocketMaster])
 
   def ws = WebSocket.async[JsValue] { request =>
 	Logger("application").info("Inside of websocket handler")
