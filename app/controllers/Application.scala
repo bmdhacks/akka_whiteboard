@@ -17,19 +17,20 @@ import akka.util.Timeout
 import akka.util.duration._
 
 object Application extends Controller {
-  
-  def index = Action { implicit request =>
-    Ok(views.html.index("Whiteboard"))
-  }
 
+  // only a single master Actor is created for the application
   val wsMaster = Akka.system.actorOf(Props[WebSocketMaster])
 
+  def index = Action { implicit request =>
+    Ok(views.html.index("Akka Whiteboard"))
+  }
+
+  // Play websocket interface.  We ask the master to create a new Actor, and
+  // we are delivered the new Actor's Iteratee/Enumerator pair.
   def ws = WebSocket.async[JsValue] { request =>
-	Logger("application").info("Inside of websocket handler")
     implicit val timeout = Timeout(1 second)
 	(wsMaster ? NewWebSocket).asPromise map {
 	  case WebSocketResponse(in, out) =>
-		Logger("application").info("Got a websocket response to initialize websocket: " + in.toString + " " + out.toString)
 		(in, out)
 	}
   }

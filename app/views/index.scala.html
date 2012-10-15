@@ -1,14 +1,16 @@
 @(message: String)(implicit request: RequestHeader)
 
-@main("Welcome to Play 2.0") {
+@main("Akka Whiteboard") {
     
-<h1>@message</h1>
+<canvas id="whiteboard">
+  <p>Your browser doesn't support canvas</p>
+</canvas>
 
-<div id="canvas-container">
-  <canvas id="whiteboard" width="640" height="480">
-	<p>Your browser doesn't support canvas</p>
-  </canvas>
+<div id="content">
+  <h1>Akka Whiteboard</h1>
+  <p>Draw something...</p>
 </div>
+
 
 <script src="@routes.Assets.at("javascripts/whiteboard.js")" type="text/javascript"></script>
 <script type="text/javascript" charset="utf-8">

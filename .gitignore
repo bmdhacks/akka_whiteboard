@@ -5,3 +5,4 @@ target
 tmp
 .history
 .ensime_lucene
+.ensime

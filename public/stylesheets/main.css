@@ -1,4 +1,26 @@
 
+body {
+	background: #ede7a8 url('/assets/images/legalpad.png') repeat; 
+	font-family: 'Intuitive', cursive, sans-serif;
+}
+
+h1 {
+	margin-bottom: 0.25em;
+}
+
+p {
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+}
+
+#content {
+	z-index: 10;
+}
+
 #whiteboard {
-	border: 1px solid black;
+	cursor: pointer;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	z-index: 0;
 }
