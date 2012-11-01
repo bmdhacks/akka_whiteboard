@@ -17,7 +17,8 @@ import play.api.Play.current
 // These objects are used to structure message data sent over Akka
 case object Quit
 case object NewWebSocket
-case class WebSocketResponse(in: Iteratee[JsValue,_], out: Enumerator[JsValue])
+case object Children
+case class WebSocketResponse(in: Iteratee[JsValue,_], out: PushEnumerator[JsValue])
 
 /**
  * This is a very simple Actor that bridges between Akka and a Play websocket connection.
@@ -29,9 +30,9 @@ case class WebSocketResponse(in: Iteratee[JsValue,_], out: Enumerator[JsValue])
 class WebSocketActor extends Actor {
 
   // Items placed in this Enumerator get sent to the browser via the websocket
-  val out = Enumerator.imperative[JsValue]()
+  val out:PushEnumerator[JsValue] = Enumerator.imperative[JsValue]()
 
-  // this handles any messages sent from the browser to the server over the socket
+  // This handles any messages sent from the browser to the server over the socket
   val in = Iteratee.foreach[JsValue] { message =>
 	// just take the socket data and send it as an akka message to our parent
 	context.parent ! message
