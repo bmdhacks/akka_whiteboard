@@ -1,16 +1,71 @@
 ========================
-HOW TO USE THIS TEMPLATE
+Akka Whiteboard
 ========================
 
-* install sbt 0.11.2  if you do not have it already. You can get it from here: https://github.com/harrah/xsbt/wiki/Getting-Started-Setup
+What is it?
+------------------------
+This is a web application that implements a shared whiteboard using
+HTML5 canvas and websockets.  It requires a modern browser that
+supports websockets such as Firefox 11, Chrome 16, Safari 6, or IE10.
+You can also use it on recent iOS devices using HTML5 touch events.
+It's very message-intensive so you should probably run it on a fast
+network.  Running over the WAN can be a bit laggy.
 
-* execute 'sbt' and then `help play` for play specific commands
+Running it
+------------------------
+``$ cd akka_whiteboard``
+``$ sbt run``
 
-* execute `sbt` and then `compile` to build the project
+Then point your browser to http://localhost:9000/, or get your IP and
+point your tablet/phone to http://<your-ip>:9000/
 
-* execute `sbt` and then 'run' to run the built-in development server
+Architecture
+------------------------
+This application has a liberal use of akka actors.
+There is one Master websocket actor acts as a singleton.  It creates a
+child websocket actor for every connected client.  The master object
+is very simple, and it just broadcasts JsObject messages to each
+client.  The client websocket Actors are also very simple, translating
+websocket messages in Play's Enumerator/Iteratee interface to/from
+Akka messages::
+                           +----------+
+                  +------- |  master  | -----+
+                  |        +----+-----+      |
+                  |             |       +---------+
+             +--------+    +---------+  |  child  |
+             |  child |    |  child  |  +---------+
+             +--------+    +---------+       |
+                 |              |            |
+             websocket      websocket    websocket
+                 |              |            |
+                 v              v            v
+            +---------+    +---------+  +---------+
+            | browser |    | browser |  | browser |
+            +---------+    +---------+  +---------+
 
-* onece the development server is running, documentation is available at http://localhost:9000/@documentation
+On the Javascript side, touch/draw events are put into JSON objects
+and sent down the socket.  When the other connected clients receive
+these messages, they draw them on the screen.
 
+I've written a few unit tests integrating specs2 with Akka and play to
+test the differnet components.  The tests are written with an aim to
+be helpful in future projects, not necessarily to be complete for this
+project.
+
+Architecture Continued
+--------------------------
+It might be more simple to forego the Actors and just keep a list of
+Enumerator/Iteratee pairs of connected clients, but that ties the
+application to a single machine.  The current implementation would be
+the simplest way to run on multiple machines (with a few changes).
+
+Websockets are used to keep the javascript code clean and free of
+dependencies, since the focus is on the typesafe stack, but a better
+solution would be multi-protocol solution using something like
+socket.io
+
+Also there's no real user management or message
+verification/authentication, again to keep the code simple.  A more
+robust solution would add these layers.
 
 
